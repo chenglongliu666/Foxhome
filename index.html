@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="description"
         content="Evaluating mathematical reasoning of foundation models in visual contexts">
-  <meta name="keywords" content="OneChart, One Chart">
+  <meta name="keywords" content="Fox, One Chart">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> OneChart: Purify the Chart Structural Extraction via One Auxiliary Token</title>
+  <title>Focus Anywhere for Fine-grained Multi-page Document Understanding</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
@@ -81,8 +81,8 @@
           <a class="navbar-item" href="https://github.com/Ucas-HaoranWei/Vary-toy/">
             <b>Vary-toy</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
           </a>
-          <a class="navbar-item" href="https://onechartt.github.io/">
-            <b>OneChart</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          <a class="navbar-item" href="https://Foxt.github.io/">
+            <b>Fox</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
           </a>
         </div>
       </div>
@@ -339,13 +339,13 @@
         <h2 class="title is-3">Introduction</h2>
         <div class="content has-text-justified">
           <p>Chart parsing poses a significant challenge due to the diversity of styles, values, texts, and so forth. Even advanced large vision-language models (LVLMs) with billions of parameters struggle to handle such tasks satisfactorily. To address this, we propose <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
-            <span class="mathvista">OneChart</span>, a reliable tool specifically devised for the <b>structural extraction</b> of chart. It captures essential components like chart titles, sources, and aligned numerical data and outputs them to a <b>Python-dict</b> format, which can effectively facilitate downstream chart reasoning tasks.</p>
+            <span class="mathvista">Fox</span>, a reliable tool specifically devised for the <b>structural extraction</b> of chart. It captures essential components like chart titles, sources, and aligned numerical data and outputs them to a <b>Python-dict</b> format, which can effectively facilitate downstream chart reasoning tasks.</p>
           
           <p>We train a <b>specialized chart encoder</b> using a large amount of synthetic chart data in both English and Chinese. To <b>enhance the numerical parts</b> of the textual output, we introduce an <b>auxiliary token</b> along with an additional decoder. The auxiliary token allows subsequent text tokens to capture enhanced numerical features through <b>causal attention</b>. Furthermore, with the aid of one auxiliary token, we devise a <b>reliable check mechanism</b> during inference by providing self-consistency distance for the generated content.</p>
 
           <p>Moreover, we present a large-scale chart-to-dict benchmark. These charts span a broad spectrum of topics and types and include content in both English and Chinese. Experiments reveal that
           <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
-          <span class="mathvista">OneChart</span> achieves <b>SOTA</b> performance in structural extraction, despite enjoying only <b>0.2B</b> parameters.
+          <span class="mathvista">Fox</span> achieves <b>SOTA</b> performance in structural extraction, despite enjoying only <b>0.2B</b> parameters.
           It shows a <b>19.1% ~ 29.4%</b> improvement in Average Precision (AP) compared to suboptimal methods in charts lacking numerical annotations. As a chart parsing agent, it also brings <b>11.2%</b> accuracy gains for LLaVA-1.6 and <b>32.6%</b> for LLaVA-1.5 in the downstream ChartQA benchmark. </p>
         </div>
       </div>
@@ -354,7 +354,7 @@
       <h2 class="title is-3" id="explorer">Explorer</h2>
       <p>Explore <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
         <span class="mathvista">Fox</span> through demo!<br>(For Barline charts, the open-source version only supports three or fewer legends.) </p>
-      <iframe src="https://onechart.xiaomy.net/" width="85%" height="620px" id="demo"></iframe>
+      <iframe src="https://Fox.xiaomy.net/" width="85%" height="620px" id="demo"></iframe>
     </div>
 </div>
 </section>
@@ -386,7 +386,7 @@
           <div class="dropdown" style="width: 100%;">
             <div class="dropdown-trigger has-text-justified" style="width: 100%; ">
               <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" style="width: 100%; border: none; background: rgba(250, 250, 250, 1);">
-                <p class="title m-0 is-4 dropdown-display">OneChart</p>
+                <p class="title m-0 is-4 dropdown-display">Fox</p>
                 <span class="icon is-large" style="position: absolute; right:0;">
                   <i class="fas fa-angle-down fa-lg" aria-hidden="true"></i>
                 </span>
@@ -526,8 +526,8 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title is-3 has-text-centered">BibTeX</h2>
-    <pre><code>@misc{chen2024onechart,
-      title={OneChart: Purify the Chart Structural Extraction via One Auxiliary Token}, 
+    <pre><code>@misc{chen2024Fox,
+      title={Fox: Purify the Chart Structural Extraction via One Auxiliary Token}, 
       author={Jinyue Chen and Lingyu Kong and Haoran Wei and Chenglong Liu and Zheng Ge and Liang Zhao and Jianjian Sun and Chunrui Han and Xiangyu Zhang},
       year={2024},
       eprint={2404.09987},
