@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Evaluating mathematical reasoning of foundation models in visual contexts">
+  <meta name="keywords" content="OneChart, One Chart">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> OneChart: Purify the Chart Structural Extraction via One Auxiliary Token</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
+  <!-- <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+/Users/panlu/Library/Mobile Documents/com~apple~CloudDocs/ImageMath/visual-mathqa-server/data_final/images
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link rel="icon" href="./static/images/Fox.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/leaderboard.css">
+
+  <!-- <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_bulma.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script> -->
+  <script type="text/javascript" src="static/js/sort-table.js" defer></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/explorer-index.js"></script>
+  <script src="./static/js/question_card.js"></script>
+
+  <script src="./data/results/model_scores.js" defer></script>
+  <script src="./static/js/leaderboard_testmini.js" defer></script>  
+  <script src="./data/results/output_folders.js" defer></script>
+  <!-- <script src="./visualizer/data/data_public.js" defer></script> -->
+  <script src="./data/data_public.js" defer></script>
+
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <!-- <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a> -->
+      <!-- @PAN TODO: consider adding links? -->
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://varybase.github.io/">
+            <b>Vary</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+          <a class="navbar-item" href="https://github.com/Ucas-HaoranWei/Vary-toy/">
+            <b>Vary-toy</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+          <a class="navbar-item" href="https://onechartt.github.io/">
+            <b>OneChart</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title is-bold">
+            <img src="static/images/Fox.png" style="width:3em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista" style="vertical-align: middle">Fox - reading pen !</span>
+            </h1>
+          <h2 class="subtitle is-3 publication-subtitle">
+            <p>Focus Anywhere for Fine-grained</p>
+            <p>Multi-page Document Understanding</p>
+            <!-- <br> -->
+            <!-- with GPT-4V, Bard, and Other Large Multimodal Models -->
+          </h2>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <span class="author-block">
+                <a href="https://github.com/chenglongliu666">Chenglong Liu</a>,</span> <br>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=J4naK0MAAAAJ&hl=en">Haoran Wei</a>,
+              </span>
+              <a href="">Jinyue Chen</a>,</span>
+            <span class="author-block">
+              <a href="">Lingyu Kong</a>,</span>
+            <span class="author-block">
+              <a href="https://joker316701882.github.io/">Zheng Ge</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Zining Zhu</a>,</span> <br>
+            </span>
+            <span class="author-block">
+              <a href="">Liang Zhao</a>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=MVZrGkYAAAAJ&hl=en">Jianjian Sun</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Chunrui Han</a>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=yuB-cfoAAAAJ&hl=en">Xiangyu Zhang</a>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">MEGVII Technology</span>
+            <!-- <span class="author-block"><sup style="color:#ed4b82">2</sup>University of Washington,</span> -->
+            <!-- <span class="author-block"><sup style="color:#ffac33">2</sup>MEGVII Technology</span><br> -->
+            <!-- <span class="paper-block"><b style="color:#f41c1c">ICLR 2024 Oral</b> (85 in 7304, 1.2%)</span> -->
+          </div>
+
+          <!-- <div class="is-size-6 publication-authors">
+            <span class="author-block">*Equal Contribution</span>
+          </div> -->
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2404.09987" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/chenglongliu666/Fox" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!--<span class="link-block">
+                <a href="#explorer"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="far fa-images"></i>
+                  </span>
+                  <span>Demo</span>
+                </a>
+              </span>-->
+              <span class="link-block">
+                <a href="https://github.com/chenglongliu666/Fox" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-zhihu"></i>
+                  </span>
+                  <span>Zhihu</span>
+                </a>
+              </span>
+              <!-- Twitter Link. -->
+              <!-- <span class="link-block">
+                <a href="https://twitter.com/lupantech/status/1717313355780964608"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <p style="font-size:18px">🌐</p>
+                  </span>
+                  <span>Twitter</span>
+                </a>
+              </span> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Foreword</h2>
+        <div class="content has-text-justified">
+          <p><b>"A picture is worth a thousand words. (one image token >> one language token)" </b></p>
+            <p><b>With a high compression ratio, our 256 image tokens can encode an PDF page with no loss of information. Further, our 2048 image tokens can efficiently handle 8-page PDF document. Then, based on this feature, we forge an amazing "reading pen", termed as <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+              <span class="mathvista">Fox</span>.</b>
+             </p>
+        </div>
+      </div>
+    </div>
+
+</div>
+</section>
+
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="container is-full has-text-centered content m-6" id="result-table">
+          <!--<h2 class="title is-3" id="explorer">Explorer</h2>-->
+          <p><img src="static/images/intro_00.png" style="width:90.0em;vertical-align: middle" alt="Logo"/>
+        </div>
+        <div class="content has-text-justified">
+          <p>Modern LVLMs still struggle to achieve <b>fine-grained document understanding</b>, such as OCR/translation/caption for regions of interest to the user, tasks that require the context of the entire page, or even multiple pages. Accordingly, this paper proposes <img src="static/images/Fox.png" style="width:2.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">Fox</span>, an effective pipeline, hybrid data, and tuning strategy, that catalyzes LVLMs to <b>focus anywhere on single/multi-page documents</b>. 
+             </p>
+          
+          <p>We introduce a novel task to boost the document understanding by making LVLMs focus attention on the document-level region, such as redefining full-page OCR as foreground focus. We employ multiple vision vocabularies to extract visual hybrid knowledge for interleaved document pages (e.g., a page containing a photo). Meanwhile, we render cross-vocabulary vision data as the catalyzer to achieve a full reaction of multiple visual vocabularies and in-document figure understanding. Further, without modifying the weights of multiple vision vocabularies, the above catalyzed fine-grained understanding capabilities can be efficiently tuned to multi-page documents, enabling the model to <b>focus anywhere in both format-free and page-free manners</b>.</p>
+
+          <p>Besides, we build a benchmark including <b>9 fine-grained sub-tasks (e.g., region-level OCR/summary/translation, color-guided OCR, cross-page VQA, multi-page OCR)</b> to promote document analysis in the community. The experimental results verify the superiority of our model. </p>
+        </div>
+      </div>
+    </div>
+
+</div>
+</section>
+
+
+<section class="section", id="Capabilities">
+  <div class="container" style="margin-top: -100px; margin-bottom: -100px;">
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+      <h2 class="title is-3 has-text-centered">Amazing Features</h2>
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/append8page_00.png" alt="result visualization" width="84%"/>
+              <p> <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can give precise responses when focusing on the <b>8-page document</b>. These pages contain <b>bilingual</b> content, have well over a thousand characters per page, and have a variety of <b>single/multi-column</b> layouts. This extreme case demonstrates powerful focusing capabilities.
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/append8page2_00.png" alt="result visualization" width="84%"/>
+              <p> The left case shows <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can handle the cross-page VQA task on the multi-page (8 pages as an example) document. <br>
+                The right case shows <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can perform the <b>dense Chinese text</b> recognition by foreground focus and obtain precise results. 
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/append_en_00.png" alt="result visualization" width="84%"/>
+              <p> The proposed <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> easily performs <b>dense English text</b> recognition by foreground focus.
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/append_story_00.png" alt="result visualization" width="84%"/>
+              <p> <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can achieve <b>text-associative in-page figure caption (see "young Dual Language Learners")</b> and fine-grained document understanding. <br>
+                <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> enjoys high flexibility and robustness when performing fine-grained <b>region-level translation/summary/OCR</b> tasks in multi-column documents.
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/vis1_00.png" alt="result visualization" width="84%"/>
+              <p><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can focus on the in-document figure and recognize this map of <b>"global seismic hazards"</b>. 
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/vis2_00.png" alt="result visualization" width="84%"/>
+              <p> <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can perform interesting VQA in the <b>cartoon book</b>.
+              </p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/append_natural_00.png" alt="result visualization" width="84%"/>
+              <p> Of course, <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+                <span class="mathvista">Fox</span> can yield interesting results in cartoon and <b>natural scenes</b>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!--
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+          <p>Chart parsing poses a significant challenge due to the diversity of styles, values, texts, and so forth. Even advanced large vision-language models (LVLMs) with billions of parameters struggle to handle such tasks satisfactorily. To address this, we propose <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">OneChart</span>, a reliable tool specifically devised for the <b>structural extraction</b> of chart. It captures essential components like chart titles, sources, and aligned numerical data and outputs them to a <b>Python-dict</b> format, which can effectively facilitate downstream chart reasoning tasks.</p>
+          
+          <p>We train a <b>specialized chart encoder</b> using a large amount of synthetic chart data in both English and Chinese. To <b>enhance the numerical parts</b> of the textual output, we introduce an <b>auxiliary token</b> along with an additional decoder. The auxiliary token allows subsequent text tokens to capture enhanced numerical features through <b>causal attention</b>. Furthermore, with the aid of one auxiliary token, we devise a <b>reliable check mechanism</b> during inference by providing self-consistency distance for the generated content.</p>
+
+          <p>Moreover, we present a large-scale chart-to-dict benchmark. These charts span a broad spectrum of topics and types and include content in both English and Chinese. Experiments reveal that
+          <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+          <span class="mathvista">OneChart</span> achieves <b>SOTA</b> performance in structural extraction, despite enjoying only <b>0.2B</b> parameters.
+          It shows a <b>19.1% ~ 29.4%</b> improvement in Average Precision (AP) compared to suboptimal methods in charts lacking numerical annotations. As a chart parsing agent, it also brings <b>11.2%</b> accuracy gains for LLaVA-1.6 and <b>32.6%</b> for LLaVA-1.5 in the downstream ChartQA benchmark. </p>
+        </div>
+      </div>
+    </div>
+    <div class="container is-full has-text-centered content m-6" id="result-table">
+      <h2 class="title is-3" id="explorer">Explorer</h2>
+      <p>Explore <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+        <span class="mathvista">Fox</span> through demo!<br>(For Barline charts, the open-source version only supports three or fewer legends.) </p>
+      <iframe src="https://onechart.xiaomy.net/" width="85%" height="620px" id="demo"></iframe>
+    </div>
+</div>
+</section>
+-->
+
+<!-- RESULTS SECTION -->
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-1 mathvista">Experiment Results</h1>
+  </div>
+</section> -->
+
+<!-- <section class="section">
+  <div class="container">
+    <div class="container is-full has-text-centered content m-6" id="result-table">
+      <h2 class="title is-3" id="explorer">Explorer</h2>
+      <p>Explore the outputs of different models on <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+        <span class="mathvista">Chart SE Benchmark</span></p>
+      <div class="level has-text-centered" style="position: sticky; top: 0; z-index: 20;">
+        <div class="level-item box m-3" style="width: 30%; background: rgba(250, 250, 250, 1);">
+          <button class="button" style="width: 100%; border: none; background: rgba(250, 250, 250, 1);" id="refresh-qids">
+            <span class="icon is-large">
+              <i class="fa fa-redo fa-lg" aria-hidden="true"></i>
+            </span>
+            <p class="title is-4 m-0">Refresh Chart</p>
+          </button>
+        </div>
+        <div class="level-item box m-3" style="width: 30%; background: rgba(250, 250, 250, 1);">
+          <div class="dropdown" style="width: 100%;">
+            <div class="dropdown-trigger has-text-justified" style="width: 100%; ">
+              <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" style="width: 100%; border: none; background: rgba(250, 250, 250, 1);">
+                <p class="title m-0 is-4 dropdown-display">OneChart</p>
+                <span class="icon is-large" style="position: absolute; right:0;">
+                  <i class="fas fa-angle-down fa-lg" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu" style="width:100%;">
+              <div class="dropdown-content">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="level-item box m-3" style="width: 30%; background: rgba(250, 250, 250, 1);">
+          <div class="dropdown" style="width: 100%;">
+            <div class="dropdown-trigger has-text-justified" style="width: 100%;">
+              <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" style="width: 100%; border: none; background: rgba(250, 250, 250, 1);">
+                <p class="title m-0 is-4 dropdown-display">GPT4V</p>
+                <span class="icon is-large" style="position: absolute; right:0;">
+                  <i class="fas fa-angle-down fa-lg" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu" style="width:100%;">
+              <div class="dropdown-content">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<!-- DATASET SECTION -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <!-- <h1 class="title is-1 mathvista"><img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>MathVista Dataset</h1> -->
+  <h1 class="title is-1 mathvista">
+    <img src="static/images/Fox.png" style="width:3em;vertical-align: middle" alt="Logo"/>
+    <span class="mathvista" style="vertical-align: middle">Fox Benchmark</span>
+  </h1>
+  </div>
+</section>
+
+            
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered has-text-centered">
+      <!-- <div class="column is-full-width has-text-centered"> -->
+        <div class="column is-four-fifths">
+        <div class="content has-text-justified">
+          <p>
+           Beyond the conventional single-page sparse VQA, we build a fine-grained benchmark for dense document-level understanding. This benchmark includes 9 challenging tasks and multi-grained questions: </p>
+           <p><b>1) page OCR:</b> <i>OCR this image.</i></p>
+           <p><b>2) region-level OCR:</b> <i>Give the OCR results of the box [x1, y1, x2, y2].</i></p>
+           <p><b>3) line-level OCR:</b> <i>OCR the line [x0, y0].</i></p>
+           <p><b>4) color-guided OCR:</b> <i>OCR red/green/blue box.</i></p>
+           <p><b>5) region-level translation:</b> <i>OCR this page.</i></p>
+           <p><b>6) region-level summary:</b> <i>OCR this page.</i></p>
+           <p><b>7) in-documen figure caption:</b> <i>What is this in the box [x1, y1, x2, y2]?</i></p>
+           <p><b>8) multi-page multi-region OCR:</b> <i>OCR boxes on multiple pages. Page 1: [box1], Page 2: [box2], Page 3: [box3], Page 4: [box4], Page 5: [box5], Page 6: [box6], Page 7: [box7], Page 8: [box8].</i></p>
+           <p><b>9) cross-page VQA:</b> <i>Which page's box contains more characters? Page 1: [box1], Page 2: [box2], Page 3: [box3], Page 4: [box4], Page 5: [box5], Page 6: [box6], Page 7: [box7], Page 8: [box8].</i></p>
+           <p>The above tasks are mainly bulit on the 112 English pages and 100 Chinese PDF pages from the InterNet. Each page contains more than 1000 characters. We will continue to develop this benchmark. </p>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Examples</h2>
+        <p>Some examples for <b>9 fine-grained sub-tasks  (no cropping patches! )</b> in <img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/>
+          <span class="mathvista">Fox</span>.</p>
+        <p>(All images are from the InterNet. If you have any questions, please email to us.)</p>
+
+        <div id="results-carousel" class="carousel results-carousel">
+
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/contexts/en_83.png" alt="arithmetic reasoning" width="80%"/>
+              <p><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/><b>Dense English PDF page. </b><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/></p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/contexts/cn_15.png" alt="arithmetic reasoning" width="80%"/>
+              <p><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/><b>Color-guided OCR on Chinese PDF page. </b><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/></p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/contexts/en_37.png" alt="arithmetic reasoning" width="80%"/>
+              <p><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/><b>In-document fugure caption on our rendered interleaved page. </b><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/></p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/contexts/en_51.png" alt="arithmetic reasoning" width="80%"/>
+              <p><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/><b>In-document fugure caption our rendered interleaved page. </b><img src="static/images/Fox.png" style="width:3.0em;vertical-align: middle" alt="Logo"/></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3" id="leaderboard_test">Leaderboard</h2>
+        <div class="content">
+          <p class="mt-3">
+            <select id="APSelect">
+              <option value="AP1"><b>AP@strict 🟥</b></option>
+              <option value="AP2"><b>AP@slight 🟨</b></option>
+              <option value="AP3"><b>AP@high 🟩</b></option>
+            </select>
+            scores on the different part and subset of <img src="static/images/Fox.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">ChartY</span>.
+          </p>
+          <div id="testmini_leaderboard"></div>
+
+          <b>Average Precision (AP)</b> is evaluated using SCRM (Structuring Chart- oriented Representation Metric). Change the dropdown to view APs under different levels of tolerance.<br> 
+          <b>P</b> is partial charts have numerical values marked on images, <b>N</b> is no charts have numerical values marked on images, <b>Y</b> is all charts have numerical values marked on images.
+          <br><b>CQA:</b> ChartQA-SE, <b>PLT:</b> PlotQA-SE, 
+          <b>XB:</b> ChartX-SE-bar, <b>XBN:</b> ChartX-SE-barnum,
+          <b>XL:</b> ChartX-SE-line, <b>XLN:</b> ChartX-SE-linenum, <b>XP:</b> ChartX-SE-pie, <br>
+          <b>ENBL:</b> ChartY-en-barline, <b>ENP:</b> ChartY-en-pie, <b>ZHBL:</b> ChartY-zh-barline, <b>ZHP:</b> ChartY-zh-pie.<br>
+        </div>
+      </div>
+    </div>
+
+  </div>
+-->
+</section>
+
+<!-- @PAN TODO: bibtex 
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">BibTeX</h2>
+    <pre><code>@misc{chen2024onechart,
+      title={OneChart: Purify the Chart Structural Extraction via One Auxiliary Token}, 
+      author={Jinyue Chen and Lingyu Kong and Haoran Wei and Chenglong Liu and Zheng Ge and Liang Zhao and Jianjian Sun and Chunrui Han and Xiangyu Zhang},
+      year={2024},
+      eprint={2404.09987},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}</code></pre>
+  </div>
+</section>
+-->
+
+<!-- <section>
+  <div class="section" id="org-banners" style="display:flex">
+    <a href="https://www.ucla.edu/" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/ucla.png">
+    </a>
+    <a href="https://www.washington.edu/" target="blank" class="ext-link">
+        <img class="center-block org-banner" src="static/images/uw.png">
+    </a>
+    <a href="https://www.microsoft.com/en-us/research/" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/microsoft.png">
+    </a>
+  </div>
+</section> -->
+
+
+<footer class="footer">
+  <!-- <div class="container"> -->
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is website adapted from <a href="https://nerfies.github.io/">Nerfies</a>, licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  <!-- </div> -->
+</footer>
+
+</body>
+</html>
